@@ -7,6 +7,7 @@ const addAuthor = document.getElementById('addAuthor');
 const addPages = document.getElementById('addPages');
 const isRead = document.getElementById('isRead');
 const submitBookBtn = document.getElementById('submitBook');
+const bookSection = document.getElementById('bookSection');
 
 let myLibrary = [];
 
@@ -27,13 +28,11 @@ function addBookToLibrary() {
     myLibrary.push(book);
 }
 
-const bookSection = document.getElementById('bookSection');
-function createBooks() {
-    myLibrary.forEach((book, index) => {
+function renderBooks() {
+    myLibrary.forEach(book => {
         let bookDiv = document.createElement('div');
         bookDiv.classList.add('book');
         bookSection.appendChild(bookDiv);
-
 
         let titleDiv = document.createElement('div');
         titleDiv.appendChild(document.createTextNode(`Title: "${book.title}"`));
@@ -79,6 +78,8 @@ function updateReadStatus(e) {
         e.target.classList.add('read');
         e.target.innerText = 'Read';
     }
+
+    saveLibrary();
 }
 
 function removeBook(e) {
@@ -88,6 +89,8 @@ function removeBook(e) {
 
     //Remove book from DOM
     bookSection.removeChild(e.target.parentElement);
+
+    saveLibrary();
 }
 
 function checkForDuplicateBook() {
@@ -105,11 +108,11 @@ function checkForDuplicateBook() {
 
 // Event Listeners
 form.addEventListener('submit', () => {
-
     if (!checkForDuplicateBook()) {
         addBookToLibrary();
+        saveLibrary();
         bookSection.innerHTML = '';
-        createBooks();
+        renderBooks();
     } else {
         alert('This book already exists!');
     }
@@ -122,11 +125,28 @@ form.addEventListener('submit', () => {
 // modal events
 addBookBtn.addEventListener('click', () => {
     modalBg.style.display = 'block';
-})
+});
 
 window.addEventListener('click', (e) => {
     if (e.target == modalBg) {
         modalBg.style.display = 'none';
         form.reset();
     }
-})
+});
+
+// LOCAL STORAGE
+function saveLibrary() {
+    localStorage.setItem('library', JSON.stringify(myLibrary));
+}
+
+function getLibrary() {
+    if (localStorage.getItem('library')) {
+        myLibrary = JSON.parse(localStorage.getItem('library'))
+        myLibrary.forEach(obj => {
+            obj.__proto__ = Object.create(Book.prototype);
+        });
+    }
+    renderBooks();
+}
+
+getLibrary();
