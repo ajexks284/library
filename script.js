@@ -18,6 +18,10 @@ function Book(title, author, pages, read) {
     this.read = read;
 }
 
+Book.prototype.changeReadStatus = function() {
+    this.read = !this.read;
+}
+
 function addBookToLibrary() {
     let book = new Book(addTitle.value, addAuthor.value, addPages.value, isRead.checked);
     myLibrary.push(book);
@@ -43,9 +47,14 @@ function createBooks() {
         pagesDiv.appendChild(document.createTextNode(`Pages: ${book.pages}`));
         bookDiv.appendChild(pagesDiv);
 
-        let readDiv = document.createElement('div');
-        readDiv.appendChild(document.createTextNode(`Read: ${book.read ? 'yes' : 'no'}`));
-        bookDiv.appendChild(readDiv);
+        let readButton = document.createElement('button');
+        readButton.addEventListener('click', (e) => {
+            updateReadStatus(e);
+        });
+        readButton.appendChild(document.createTextNode(`${book.read ? 'Read' : 'Not Read'}`));
+        readButton.classList.add('read-status-btn');
+        readButton.classList.add(`${book.read ? 'read' : 'not-read'}`); // for styling
+        bookDiv.appendChild(readButton);
 
         let removeBtn = document.createElement('button');
         removeBtn.addEventListener('click', (e) => {
@@ -55,6 +64,21 @@ function createBooks() {
         removeBtn.classList.add('remove-btn');
         bookDiv.appendChild(removeBtn);
     })
+}
+
+function updateReadStatus(e) {
+    let bookIndex = [...bookSection.children].indexOf(e.target.parentElement);
+    myLibrary[bookIndex].changeReadStatus();
+
+    if (e.target.classList.contains('read')) {
+        e.target.classList.remove('read');
+        e.target.classList.add('not-read');
+        e.target.innerText = 'Not Read';
+    } else {
+        e.target.classList.remove('not-read');
+        e.target.classList.add('read');
+        e.target.innerText = 'Read';
+    }
 }
 
 function removeBook(e) {
