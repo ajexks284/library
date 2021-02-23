@@ -32,51 +32,59 @@ function renderBooks() {
     myLibrary.forEach(book => {
         let bookDiv = document.createElement('div');
         bookDiv.classList.add('book');
+        bookDiv.classList.add(`${book.read ? 'read' : 'not-read'}`);
         bookSection.appendChild(bookDiv);
 
         let titleDiv = document.createElement('div');
-        titleDiv.appendChild(document.createTextNode(`Title: "${book.title}"`));
+        titleDiv.appendChild(document.createTextNode(`${book.title}`));
         bookDiv.appendChild(titleDiv);
 
         let authorDiv = document.createElement('div');
-        authorDiv.appendChild(document.createTextNode(`Author: ${book.author}`));
+        authorDiv.appendChild(document.createTextNode(`By: ${book.author}`));
         bookDiv.appendChild(authorDiv);
 
         let pagesDiv = document.createElement('div');
-        pagesDiv.appendChild(document.createTextNode(`Pages: ${book.pages}`));
+        pagesDiv.appendChild(document.createTextNode(`Number of pages: ${book.pages}`));
         bookDiv.appendChild(pagesDiv);
 
-        let readButton = document.createElement('button');
-        readButton.addEventListener('click', (e) => {
+        let markAsReadDiv = document.createElement('div');
+        markAsReadDiv.classList.add('mark-as-read-div');
+        let markAsReadText = document.createTextNode('Mark as read:')
+        markAsReadDiv.appendChild(markAsReadText);
+
+        let readSpan = document.createElement('span');
+        readSpan.addEventListener('click', (e) => {
             updateReadStatus(e);
         });
-        readButton.appendChild(document.createTextNode(`${book.read ? 'Read' : 'Not Read'}`));
-        readButton.classList.add('read-status-btn');
-        readButton.classList.add(`${book.read ? 'read' : 'not-read'}`); // for styling
-        bookDiv.appendChild(readButton);
+        readSpan.classList.add('read-status-span');
+        readSpan.classList.add(`${book.read ? 'read' : 'not-read'}`); // for styling
+        markAsReadDiv.appendChild(readSpan);
 
-        let removeBtn = document.createElement('button');
+        bookDiv.appendChild(markAsReadDiv);
+
+        let removeBtn = document.createElement('span');
         removeBtn.addEventListener('click', (e) => {
             removeBook(e);
         });
-        removeBtn.appendChild(document.createTextNode('Remove'));
         removeBtn.classList.add('remove-btn');
         bookDiv.appendChild(removeBtn);
     })
 }
 
 function updateReadStatus(e) {
-    let bookIndex = [...bookSection.children].indexOf(e.target.parentElement);
+    let bookIndex = [...bookSection.children].indexOf(e.target.parentElement.parentElement);
     myLibrary[bookIndex].changeReadStatus();
 
     if (e.target.classList.contains('read')) {
         e.target.classList.remove('read');
         e.target.classList.add('not-read');
-        e.target.innerText = 'Not Read';
+        e.target.parentElement.parentElement.classList.remove('read');
+        e.target.parentElement.parentElement.classList.add('not-read');
     } else {
         e.target.classList.remove('not-read');
         e.target.classList.add('read');
-        e.target.innerText = 'Read';
+        e.target.parentElement.parentElement.classList.remove('not-read');
+        e.target.parentElement.parentElement.classList.add('read');
     }
 
     saveLibrary();
