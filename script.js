@@ -11,18 +11,21 @@ const bookSection = document.getElementById('bookSection');
 
 let myLibrary = [];
 
+// Book Class
+class Book {
+    constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+    }
+
+    changeReadStatus() {
+        this.read = !this.read;
+    }
+}
+
 // Functions
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-}
-
-Book.prototype.changeReadStatus = function() {
-    this.read = !this.read;
-}
-
 function addBookToLibrary() {
     let book = new Book(addTitle.value, addAuthor.value, addPages.value, isRead.checked);
     myLibrary.push(book);
